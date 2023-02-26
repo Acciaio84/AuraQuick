@@ -1,0 +1,183 @@
+<!--
+*	Author: 			Michael Rigamonti
+*	Copyright : 	    2022
+*	Description:		AuraQuick aura Abstract components
+
+	This file is part of AuraQuick.
+
+	MIT License
+    Copyright (c) 2022 Michael Rigamonti
+
+	Permission is hereby granted, free of charge, to any person obtaining a copy
+	of this software and associated documentation files (the "Software"), to deal
+	in the Software without restriction, including without limitation the rights
+	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions:
+
+	The above copyright notice and this permission notice shall be included in all
+	copies or substantial portions of the Software.
+
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+	SOFTWARE.
+
+*   Content:
+		This abstract component use a lightning:spinner by default, managed during the Apex Call.
+			You can use "AQ_showSpinner" attribute (default = true) to turn on/off the visibility of the spinner.
+			Generally in the "callBackFunction" you must set it to false to hide spinner when callback is finished
+			You can also use "AQ_enableSpinner" attribute (default = true) to turn off this functionality and use a custom spinner
+
+		- Method handleError:
+			Manage a generic Javascript exception by log it in the console and showing a toast Message
+		- Method manageCallExceptions:
+			Manage a generic error status (ERROR or INCOMPLETE) in an Apex Call
+		- Method callToController:
+			This method allow to call an Action in the Controller Apex
+			Parameters:
+				cmp, event, helper: Component, event, helper are the standard aura parameters
+				methodName:         Name of the method use in the debud logs
+				actionName:         Name of Action in the Controller Apex
+				parameters:         A List of parameters of Action in the Controller Apex in form of object { "PARAMETER_NAME": Value }
+				callBackFunction    A function in the helper executed in case of SUCCESS
+		- Method callToControllerPromise:
+			This method allow to call an Action in the Controller Apex and return a Promise
+			Parameters:
+				cmp, event, helper: Component, event, helper are the standard aura parameters
+				methodName:         Name of the method use in the debud logs
+				actionName:         Name of Action in the Controller Apex
+				parameters:         A List of parameters of Action in the Controller Apex in form of object { "PARAMETER_NAME": Value }
+
+		SAMPLE:
+			1. CREATE YOUR OWN COMPONENT **************************************************
+				You can can create a new aura component simply by extending this whith the "extends" keyword and your component
+				automatically will inherit attributes and function of this abstract component
+				AURA COMPONENT ___________________________________
+				<aura:component description="MY_COMPONENT_NAME" extends="c:AQ_AuraAbstract" ...>
+				__________________________________________________
+
+			2. USE "callToController" FUNCTION **************************************************
+
+				Create 2 method in the helper of the component implementS this abstract one.
+
+				The first one is a simple aura function with component, event, helper standard parameters use to Apex call.
+				Use this first method to instance a javascript object ({ "PARAMETER_NAME": Value }) and fill it with all the
+				parameters needed by the method invoked in the Apex. In the sample at the Apex side we have "myApexMethod" with
+				a single parameter named parentId. So we use callToController with:
+					- the "callMyApexMethod" function name,
+					- "myApexMethod" that is the name of the method in apex,
+					- the object parameters containing the list of parameters
+					- and the function we need to call when the callback to apex will be returned successfully
+
+				The second function is an aura function with component, event, helper standard parameters and contains also
+				the results of the callback to apex in the retValue parameter. You can use retValue to to all the logic we
+				need in the aura-side (usually set a component attribute with the result of the apex call).
+				If the logic is completed you turn off the spinner by setting AQ_showSpinner to false.
+
+				APEX METHOD ______________________________________
+				@AuraEnabled(Cacheable=true)
+				public static RETURN_TYPE myApexMethod(String parentId) {
+				...
+				__________________________________________________
+
+				HELPER ___________________________________________
+				callMyApexMethod : function(cmp, event, helper) { // FIRST METHOD
+					console.log("[HLPR] callMyApexMethod");
+					let parameters = {};
+					parameters.parentId = cmp.get("v.recordId");
+					// ADD OTHER PARAMETERS...
+					helper.callToController(cmp, event, helper, "callMyApexMethod", "myApexMethod", parameters,  helper.myApexMethodCallBack);
+				},
+				myApexMethodCallBack : function(cmp, event, helper, retValue) { // SECOND METHOD
+					console.log("[HLPR] myApexMethodCallBack");
+					cmp.set("v.myAttribute", retValue);
+					// SOME OTHER LOGICS...
+					cmp.set("v.AQ_showSpinner", false);
+				}
+				__________________________________________________
+			3. USE "callToControllerPromise" FUNCTION **************************************************
+
+				You can use the same logic of the previous callToController function, but in this case there is no
+				callback function because this method direct return a Promise. In the callback success return the
+				results of the callback and in the other case return the error occurred.
+				In this way you can manage single or multiple Promises like below:
+
+				HELPER ___________________________________________
+				firstCallBack : function(cmp, event, helper, retVal) {
+					var p1Results = retVal;
+				},
+				secondCallBack : function(cmp, event, helper, retVal) {
+					var p2Results = retVal;
+				},
+				...
+
+			    /**
+				** Initialize the Component calling Promises
+				*/
+				initPromises : function(cmp, event, helper)
+				{
+				    let parameters1 = {};
+				    parameters1.paramName1 = "value1";
+				    parameters1.paramName2 = "value2";
+
+				    let parameters2 = {};
+				    parameters2.paramName1 = "value1";
+
+					Promise.all(
+					    [
+					        helper.callToControllerPromise(cmp, event, helper, "callMyApexMethod1", "myApexMethod1", parameters1),
+					        helper.callToControllerPromise(cmp, event, helper, "callMyApexMethod2", "myApexMethod2", parameters2),
+					        ...
+					    ]
+					).then(
+						function(results) {
+							helper.firstCallBack(cmp, event, helper, results[0]); //Results from Promise 1
+							helper.secondCallBack(cmp, event, helper, results[1]); //Results from Promise 2
+							... //Results from other Promises
+			            }
+			        ).catch(function (err) {
+						// Handle error
+						helper.handleError(cmp, event, helper, err);
+			        });
+				}
+				__________________________________________________
+
+			4. USE "handleError" FUNCTION **************************************************
+				Both in the controller or in the helper of your aura component you can easly manage errors by using try-catch
+				and invoking "helper.handleError". This will log a console error, show a toast message to the user
+				and eventually stop the spinner
+
+				CONTROLLER _______________________________________
+				myFunction : function(cmp, event, helper) {
+					try {
+						console.log("[CTRL] changeCurrency");
+						//DO SOMETHING
+					}
+					catch(e) {
+						// Handle error
+						helper.handleError(cmp, event, helper, e);
+					}
+				}
+				__________________________________________________
+ -->
+
+<aura:component description="AQ_AuraAbstract" extensible="true" abstract="true" access="GLOBAL">
+	<!-- ***** ATTRIBUTES ***** -->
+	<!-- SPINNER -->
+	<aura:attribute name="AQ_enableSpinner" type="Boolean" description="Indicates if loading spinner is visible"
+					default="true" access="GLOBAL"/>
+	<aura:attribute name="AQ_showSpinner" type="Boolean" description="Indicates when the loading spinner is visible during Apex Calls"
+					default="true" access="GLOBAL"/>
+
+	<!-- ***** BODY START ***** -->
+	<aura:if isTrue="{! and(v.AQ_enableSpinner, v.AQ_showSpinner) }">
+		<div class="">
+			<lightning:spinner size="large" alternativeText="{! $Label.c.AS_Loading }" variant="brand"/>
+		</div>
+	</aura:if>
+	{!v.body}
+</aura:component>
