@@ -30,7 +30,7 @@ This abstract Aura Component contains basic features that all components should 
     
   2. SET the lightning:spinner
 
-  This abstract component use a lightning:spinner by default, managed during the Apex Call. You can use "AT_showSpinner" attribute (default = true) to turn on/off the visibility of the spinner. Generally in the "callBackFunction" you must set it to false to hide spinner when callback is finished. You can also use "AT_enableSpinner" attribute (default = true) to turn off this functionality and use a custom spinner.
+  This abstract component use a lightning:spinner by default, managed during the Apex Call. You can use "AQ_showSpinner" attribute (default = true) to turn on/off the visibility of the spinner. Generally in the "callBackFunction" you must set it to false to hide spinner when callback is finished. You can also use "AQ_enableSpinner" attribute (default = true) to turn off this functionality and use a custom spinner.
     
   3. USE "handleError" FUNCTION
   
