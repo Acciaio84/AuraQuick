@@ -1,5 +1,6 @@
 # AuraQuick
-AuraQuick is a framework for speeding up Salesforce deployments
+AuraQuick is a framework for speeding up deployments of Salesforce Lightning Aura Components
+
 
 Content of the framework:
 
