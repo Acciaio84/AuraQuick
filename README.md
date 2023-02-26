@@ -1,9 +1,9 @@
-# SteelQuick
-SteelQuick is a framework for speeding up Salesforce deployments
+# AuraQuick
+AuraQuick is a framework for speeding up Salesforce deployments
 
 Content of the framework:
 
-# SQ_AuraAbstract:
+# AQ_AuraAbstract:
 This abstract Aura Component contains basic features that all components should have (management of a spinner in the interface and management of communication errors with the server) and the main features able to significantly speed up the development of new aura components. In details:
 - SPINNER:
   The component use a lightning:spinner by default, managed during the Apex Call.
@@ -25,7 +25,7 @@ This abstract Aura Component contains basic features that all components should 
     
     
     AURA COMPONENT ___________________________________
-    <aura:component description="MY_COMPONENT_NAME" extends="c:SQ_AuraAbstract" ...>
+    <aura:component description="MY_COMPONENT_NAME" extends="c:AQ_AuraAbstract" ...>
     __________________________________________________
     
   2. SET the lightning:spinner
@@ -69,7 +69,7 @@ This abstract Aura Component contains basic features that all components should 
   - and the function we need to call when the callback to apex will be returned successfully
 
   The second function is an aura function with component, event, helper standard parameters and contains also the results of the callback to apex in the retValue parameter. You can use retValue to to all the logic we need in the aura-side (usually set a component attribute with the result of the apex call).
-  If the logic is completed you can turn off the spinner by setting SQ_showSpinner to false.
+  If the logic is completed you can turn off the spinner by setting AQ_showSpinner to false.
 
     HELPER ___________________________________________
     callMyApexMethod : function(cmp, event, helper) { // FIRST METHOD
@@ -83,7 +83,7 @@ This abstract Aura Component contains basic features that all components should 
       console.log("[HLPR] myApexMethodCallBack");
       cmp.set("v.myAttribute", retValue);
       // SOME OTHER LOGICS...
-      cmp.set("v.SQ_showSpinner", false);
+      cmp.set("v.AQ_showSpinner", false);
     }
     __________________________________________________
 
