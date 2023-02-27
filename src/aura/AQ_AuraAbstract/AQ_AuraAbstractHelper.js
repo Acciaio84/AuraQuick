@@ -55,7 +55,10 @@
 			console.error("[HLPR] User is offline, device doesn't support drafts.");
 			// show the Toast Message
 			let toastEvent = $A.get("e.force:showToast");
-			toastEvent.setParams({title: "Incomplete", message: $A.get("$Label.c.AQ_ERROR_UserOffline"), type: "warning"});
+			toastEvent.setParams({
+			    title: "Incomplete",
+			    message: $A.get("User is offline, device doesn\'t support drafts."),
+			    type: "warning"});
 			toastEvent.fire();
 		}
 		else if(state === "ERROR") {
@@ -66,24 +69,13 @@
 				let concurrentError = false;
 				for(let i=0; i<errors.length; i++) {
 					if(errors[i] && errors[i].message) {
-						if(errors[i].message === "AQ_CPQ_ConcurrentError"){
-							concurrentError = true;
-						} else {
-							errorMessage += "\n• " + errors[i].message;
-						}
+						errorMessage += "\n• " + errors[i].message;
 					}
 					else if(errors[i] && errors[i].pageErrors) {
 					    for(let j=0; j<errors[i].pageErrors.length; j++) {
 							errorMessage += '\n• ' + errors[i].pageErrors[j].message;
 						}
 					}
-				}
-
-				if(concurrentError) {
-					// show the Toast Message
-					let toastEvent = $A.get("e.force:showToast");
-					toastEvent.setParams({title: "Attention", mode: "sticky", message: $A.get("$Label.c.AQ_CPQ_ConcurrentError"), type: "warning"});
-					toastEvent.fire();
 				}
 
 				if(errorMessage !== "") {
@@ -158,7 +150,7 @@
 				callBackFunction(cmp, event, helper, retValue);
 			}
 			else {
-				let errors = $A.get("$Label.c.AQ_ERROR_EmptyResponse"); // "Server returned an empty response."
+				let errors = $A.get("Server returned an empty response.");
 				console.error("[HLPR] manageEmptyResponse Response: "+errors);
 				// show the Toast Message
 				let toastEvent = $A.get("e.force:showToast");
