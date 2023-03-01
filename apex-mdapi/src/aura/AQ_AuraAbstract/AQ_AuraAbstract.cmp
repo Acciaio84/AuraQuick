@@ -176,7 +176,7 @@
 	<!-- ***** BODY START ***** -->
 	<aura:if isTrue="{! and(v.AQ_enableSpinner, v.AQ_showSpinner) }">
 		<div class="">
-			<lightning:spinner size="large" alternativeText="{! $Label.c.AS_Loading }" variant="brand"/>
+			<lightning:spinner size="large" alternativeText="Loading..." variant="brand"/>
 		</div>
 	</aura:if>
 	{!v.body}
