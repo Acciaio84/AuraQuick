@@ -1,10 +1,13 @@
 # AuraQuick
 AuraQuick is a framework for speeding up deployments of Salesforce Lightning Aura Components
 
+# Deploy to Salesforce
+<a href="https://githubsfdeploy.herokuapp.com?owner=Acciaio84&repo=AuraQuick&ref=main">
+  <img alt="Deploy to Salesforce"
+       src="https://raw.githubusercontent.com/afawcett/githubsfdeploy/master/src/main/webapp/resources/img/deploy.png">
+</a>
 
-Content of the framework:
-
-# AQ_AuraAbstract:
+# AQ_AuraAbstract Component
 This abstract Aura Component contains basic features that all components should have (management of a spinner in the interface and management of communication errors with the server) and the main features able to significantly speed up the development of new aura components. In details:
 - SPINNER:
   The component use a lightning:spinner by default, managed during the Apex Call.
@@ -22,7 +25,7 @@ This abstract Aura Component contains basic features that all components should 
 # Detailed documentation
   1. CREATE YOUR OWN COMPONENT
 
-  You can can create a new aura component simply by extending this whith the "extends" keyword and your component automatically will inherit attributes and function of this abstract component.
+  You can create a new aura component simply by extending this whith the "extends" keyword and your component automatically will inherit attributes and function of this abstract component.
     
     
     AURA COMPONENT ___________________________________
