@@ -169,15 +169,27 @@
 	<!-- ***** ATTRIBUTES ***** -->
 	<!-- SPINNER -->
 	<aura:attribute name="AQ_enableSpinner" type="Boolean" description="Indicates if loading spinner is visible"
-					default="true" access="GLOBAL"/>
-	<aura:attribute name="AQ_showSpinner" type="Boolean" description="Indicates when the loading spinner is visible during Apex Calls"
-					default="true" access="GLOBAL"/>
+	                default="true" access="GLOBAL"/>
+	<aura:attribute name="AQ_showSpinner" type="Boolean"
+	                description="Indicates when the loading spinner is visible during Apex Calls"
+	                default="true" access="GLOBAL"/>
+	<aura:attribute name="AQ_sizeSpinner" type="String"
+	                description="Indicates the size for the loading spinner. Default: large"
+	                default="large" access="GLOBAL"/>
+	<aura:attribute name="AQ_variantSpinner" type="String"
+	                description="Indicates the size for the loading spinner. Default: large"
+	                default="brand" access="GLOBAL"/>
+	<aura:attribute name="AQ_styleClassSpinner" type="String"
+	                description="Indicates the css class for the loading spinner."
+	                default="" access="GLOBAL"/>
 
 	<!-- ***** BODY START ***** -->
-	<aura:if isTrue="{! and(v.AQ_enableSpinner, v.AQ_showSpinner) }">
-		<div class="">
-			<lightning:spinner size="large" alternativeText="Loading..." variant="brand"/>
-		</div>
-	</aura:if>
-	{!v.body}
+	<div>
+		<aura:if isTrue="{! and(v.AQ_enableSpinner, v.AQ_showSpinner) }">
+			<div class="AQ_styleClassSpinner">
+				<lightning:spinner size="{!v.AQ_sizeSpinner}" alternativeText="Loading..." variant="{!v.AQ_variantSpinner}"/>
+			</div>
+		</aura:if>
+		{!v.body}
+	</div>
 </aura:component>

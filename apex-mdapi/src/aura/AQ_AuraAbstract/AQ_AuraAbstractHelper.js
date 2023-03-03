@@ -33,7 +33,7 @@
 	** @param	exception	Exception object of the error
 	*/
 	handleError : function(cmp, event, helper, exception) {
-		console.log("[HLPR] handleError START");
+		//console.log("[HLPR] handleError START");
 		// Handle error
 		console.error(exception);
 		// show the Toast Message
@@ -49,7 +49,7 @@
 	** @param	response	The value returned by the apex call
 	*/
 	manageCallExceptions : function(cmp, event, helper, state, response) {
-		console.log("[HLPR] manageCallExceptions START");
+		//console.log("[HLPR] manageCallExceptions START");
 		if(state === "INCOMPLETE") {
 			// handle the incomplete state
 			console.error("[HLPR] User is offline, device doesn't support drafts.");
@@ -102,8 +102,8 @@
 	*/
 	callToController : function(cmp, event, helper, methodName, actionName, parameters, callBackFunction) {
 		try {
-			console.log("[HLPR] callToController START");
-			console.log("[HLPR] methodName: " + methodName+ " actionName: " + actionName+ " parameters: " + parameters);
+			//console.log("[HLPR] callToController START");
+			//console.log("[HLPR] methodName: " + methodName+ " actionName: " + actionName+ " parameters: " + parameters);
 			cmp.set("v.AQ_showSpinner", true);
 			let action = cmp.get("c." + actionName);
 
@@ -114,7 +114,7 @@
 				action.setCallback(cmp, $A.getCallback(function (response) {
 					try {
 						let state = response.getState();
-						console.log("[HLPR] " + methodName + " Callback State: " + state);
+						//console.log("[HLPR] " + methodName + " Callback State: " + state);
 						if(state === "SUCCESS") {
 							let retValue = response.getReturnValue();
 							callBackFunction(cmp, event, helper, retValue);
@@ -178,8 +178,8 @@
 	*/
 	callToControllerPromise : function(cmp, event, helper, methodName, actionName, parameters) {
 		try {
-			console.log("[HLPR] callToController START");
-			console.log("[HLPR] methodName: " + methodName+ " actionName: " + actionName+ " parameters: " + parameters);
+			//console.log("[HLPR] callToController START");
+			//console.log("[HLPR] methodName: " + methodName+ " actionName: " + actionName+ " parameters: " + parameters);
 			cmp.set("v.AQ_showSpinner", true);
 			let action = cmp.get("c." + actionName);
 
@@ -192,7 +192,7 @@
 					action.setCallback(cmp, $A.getCallback(function (response) {
 						try {
 							let state = response.getState();
-							console.log("[HLPR] " + methodName + " Callback State: " + state);
+							//console.log("[HLPR] " + methodName + " Callback State: " + state);
 							if (cmp.isValid() && state === "SUCCESS") {
 								resolve(response.getReturnValue());
 							}
