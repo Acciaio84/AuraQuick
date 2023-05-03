@@ -38,7 +38,7 @@
 		console.error(exception);
 		// show the Toast Message
 		let toastEvent = $A.get("e.force:showToast");
-		toastEvent.setParams({title: "Error", mode: "sticky", message: exception.message, type: "error"});
+		toastEvent.setParams({title: "Error", duration: "10000", message: exception.message, type: "error"});
 		toastEvent.fire();
 		cmp.set("v.AQ_showSpinner", false);
 	},
@@ -81,7 +81,7 @@
 				if(errorMessage !== "") {
 					// show the Toast Message
 					let toastEvent = $A.get("e.force:showToast");
-					toastEvent.setParams({title: "Error", mode: "sticky", message: errorMessage, type: "error"});
+					toastEvent.setParams({title: "Error", duration: "10000", message: errorMessage, type: "error"});
 					toastEvent.fire();
 				}
 
@@ -100,7 +100,7 @@
 	** @param	parameters:         A List of parameters of Action in the Controller Apex in form of object { "PARAMETER_NAME": Value }
 	** @param	callBackFunction    A function in the helper executed in case of SUCCESS
 	*/
-	callToController : function(cmp, event, helper, methodName, actionName, parameters, callBackFunction) {
+	callToController : function(cmp, event, helper, methodName, actionName, parameters, callBackFunction, errorFunction) {
 		try {
 			//console.log("[HLPR] callToController START");
 			//console.log("[HLPR] methodName: " + methodName+ " actionName: " + actionName+ " parameters: " + parameters);
@@ -121,6 +121,9 @@
 						}
 						else {
 							helper.manageCallExceptions(cmp, event, helper, state, response);
+							if(errorFunction) {
+							    errorFunction(cmp, event, helper, state, response)
+							}
 						}
 					}
 					catch(e) {
