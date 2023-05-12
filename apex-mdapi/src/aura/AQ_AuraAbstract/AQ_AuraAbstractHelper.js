@@ -6,7 +6,7 @@
 	This file is part of AuraQuick.
 
 	MIT License
-    Copyright (c) 2022 Michael Rigamonti
+	Copyright (c) 2022 Michael Rigamonti
 
 	Permission is hereby granted, free of charge, to any person obtaining a copy
 	of this software and associated documentation files (the "Software"), to deal
@@ -56,9 +56,9 @@
 			// show the Toast Message
 			let toastEvent = $A.get("e.force:showToast");
 			toastEvent.setParams({
-			    title: "Incomplete",
-			    message: $A.get("User is offline, device doesn\'t support drafts."),
-			    type: "warning"});
+				title: "Incomplete",
+				message: $A.get("User is offline, device doesn\'t support drafts."),
+				type: "warning"});
 			toastEvent.fire();
 		}
 		else if(state === "ERROR") {
@@ -68,12 +68,28 @@
 				let errorMessage = "";
 				let concurrentError = false;
 				for(let i=0; i<errors.length; i++) {
+					// Standard Error
 					if(errors[i] && errors[i].message) {
-						errorMessage += "\n• " + errors[i].message;
+						console.log("Standard Error");
+						errorMessage += (errorMessage == "" ? "" : "\n") + "• " + errors[i].message;
 					}
-					else if(errors[i] && errors[i].pageErrors) {
-					    for(let j=0; j<errors[i].pageErrors.length; j++) {
-							errorMessage += '\n• ' + errors[i].pageErrors[j].message;
+					// Validation Rule on Page
+					else {
+						if(errors[i] && errors[i].pageErrors) {
+							console.log("Validation Rule on Page");
+							for(let j=0; j<errors[i].pageErrors.length; j++) {
+								errorMessage += (errorMessage == "" ? "" : "\n") + "• " + errors[i].pageErrors[j].message;
+							}
+						}
+						// Validation Rule on Field
+						if(errors[i] && errors[i].fieldErrors) {
+							console.log("Validation Rule on Field");
+							Object.keys(errors[i].fieldErrors).forEach(function(key,index) {
+								errorMessage += (errorMessage == "" ? "" : "\n") + "• " + key + ': ';
+								for(let j=0; j<errors[i].fieldErrors[key].length; j++) {
+									errorMessage += '\n' + errors[i].fieldErrors[key][j].message;
+								}
+							});
 						}
 					}
 				}
@@ -122,7 +138,7 @@
 						else {
 							helper.manageCallExceptions(cmp, event, helper, state, response);
 							if(errorFunction) {
-							    errorFunction(cmp, event, helper, state, response)
+								errorFunction(cmp, event, helper, state, response)
 							}
 						}
 					}
